@@ -3,23 +3,26 @@
 MCU=attiny85
 F_CPU = 16500000L
 CC=avr-gcc
+vpath %.c $(src/)
+vpath %.o %(src/)
 OBJCOPY=avr-objcopy
-CFLAGS=-g -mmcu=$(MCU) -Wall -Wstrict-prototypes -Os -mcall-prologues
-
+CFLAGS=-g -mmcu=$(MCU) -Wall -Wstrict-prototypes -Os -mcall-prologues -Isrc/include
+SRCS = $(wildcard src/*.c)
+OBJS = $(patsubst %c, %o, $(SRCS))
 #-------------------
 all: main.hex
-main.hex : main.out 
-	$(OBJCOPY) -R .eeprom -O ihex main.out main.hex
-main.out : main.o
-	$(CC) $(CFLAGS) -o main.out -Wl,-Map,main.map main.o
-main.o : main.c
-	$(CC) $(CFLAGS) -Os -c main.c
+main.hex : main.o
+	$(OBJCOPY) -R .eeprom -O ihex bin/main.o bin/main.hex
+main.o : $(OBJS)
+	@$(CC) $(CFLAGS) $^ -Wl,-Map,bin/main.map -o bin/$@
+%.o : %.c
+	@$(CC) $(CFLAGS) $< -c -o $@
 #-------------------
 help: 
 	@echo "Type make or make install"	
 #-------------------
 install:
-	sudo -E env "PATH=$(PATH)" micronucleus --run main.hex	
+	sudo -E env "PATH=$(PATH)" micronucleus --run bin/main.hex	
 clean:
-	rm -f *.o *.map *.out main.hex
+	rm -f src/*.o bin/*.map main.hex
 #-------------------
