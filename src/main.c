@@ -1,65 +1,55 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-// Define USI pins for ATtiny85
-#define SS_PIN   PB3
-#define MOSI_PIN PB0
-#define MISO_PIN PB1
-#define SCK_PIN  PB2
+#define MOSI_PIN PB0  // PB0 is MOSI : OUTPUT
+#define MISO_PIN PB1  // PB1 is MISO : INPUT
+#define SCK_PIN  PB2  // PB2 is SCK : OUTPUT
+#define SS_PIN   PB3  // PB3 is SS (Slave Select) : OUTPUT
 
-void USI_SPI_MasterInit(void) {
-    // Set MOSI, SCK, and SS as output, MISO as input
-    DDRB |= (1 << MOSI_PIN) | (1 << SCK_PIN) | (1 << SS_PIN);
-    DDRB &= ~(1 << MISO_PIN);  // MISO is input
+#define SCK_HIGH() (PORTB |= 0b00000100)   // Set SCK high
+#define SCK_LOW()  (PORTB &= 0b11111011)  // Set SCK low
+#define SS_LOW()   (PORTB &= 0b11110111)   // Set SS low (select slave)
+#define SS_HIGH()  (PORTB |= 0b00001000)    // Set SS high (deselect slave)
 
-    // Set USI to three-wire mode, clock source: external, positive edge
-    USICR = (1 << USIWM0) | (1 << USICS1); // 3-wire mode, ext. clock positive edge
-    
-    // Set SS high to deselect the slave initially
-    PORTB |= (1 << SS_PIN);
-}
+void usi_init(void) {
+    // Set MOSI, SCK, and SS as outputs, MISO as input
+    // DDRB |= (1 << MOSI_PIN) | (1 << SCK_PIN) | (1 << SS_PIN);
+    // DDRB &= ~(1 << MISO_PIN);  // MISO is input
+    DDRB = 0b11111110;
+    // Set SS high initially (deselect the slave)
+    SS_HIGH();
 
-void USI_SPI_MasterTransmit(uint8_t data) {
-    // Load data into the USI data register
-    USIDR = data;
+    // Set up USI for SPI master mode, with software clock strobe
+    USICR = (1 << USIWM0) | (1 << USICS1);}
 
-    // Clear the USI counter overflow flag
-    USISR = (1 << USIOIF);
+uint8_t usi_transfer(uint8_t data) {
+    USIDR = 0xAA;  // Load data into USI Data Register
+    USISR = (1 << USIOIF);  // Clear the USI overflow flag
 
-    // Manually generate clock pulses by toggling SCK
-    for (uint8_t i = 0; i < 16; i++) { // 8 cycles for each bit, 16 edges total
-        USICR |= (1 << USITC);  // Toggle the clock
+    for (uint8_t i = 0; i < 8; i++) {
+        PORTB |= (1 << SCK_PIN);  // Clock high
+        _delay_us(1);
+        PORTB &= ~(1 << SCK_PIN);  // Clock low
+        _delay_us(1);
+
     }
-
-    // Wait for transmission to complete (check overflow flag)
-    while (!(USISR & (1 << USIOIF)));
-}
-
-void SPI_SetSlaveSelectLow(void) {
-    PORTB &= ~(1 << SS_PIN);  // Pull SS low to select the slave
-}
-
-void SPI_SetSlaveSelectHigh(void) {
-    PORTB |= (1 << SS_PIN);   // Pull SS high to deselect the slave
+    return USIDR;  // Return received data
 }
 
 int main(void) {
-    // Initialize USI as SPI Master
-    USI_SPI_MasterInit();
+    usi_init();  // Initialize USI for SPI
 
-    // Loop and send data continuously
     while (1) {
-        // Select the slave
-        SPI_SetSlaveSelectLow();
+        // Start communication by pulling SS low
+        SS_LOW();
 
-        // Transmit data (example: 0x55)
-        USI_SPI_MasterTransmit(0x55);
+        // Send data and receive response
+        uint8_t received = usi_transfer(0x1A);  // Send 0xAA and receive response
 
-        // Deselect the slave
-        SPI_SetSlaveSelectHigh();
+        // End communication by pulling SS high
+        SS_HIGH();
 
-        // Delay for visibility (example: 1 second)
-        _delay_ms(1000);
+        _delay_ms(1000);  // Wait a bit before the next transfer
     }
 
     return 0;
