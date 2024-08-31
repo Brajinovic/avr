@@ -25,3 +25,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: doc/build/
           force_orphan: true
+
+      - name: Run ghp-import
+        run: | 
+          ghp-import -n -p -f doc/build/html
