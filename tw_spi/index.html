@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Three Wire SPI &#8212; The AVR Project  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=def86cc0" />
+    
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Welcome to The AVR Project’s documentation!" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to The AVR Project’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">The AVR Project  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Three Wire SPI</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="three-wire-spi">
+<h1>Three Wire SPI<a class="headerlink" href="#three-wire-spi" title="Link to this heading">¶</a></h1>
+<section id="basic-info">
+<h2>Basic info<a class="headerlink" href="#basic-info" title="Link to this heading">¶</a></h2>
+<p>The ATTiny does not have the necessary hardware to support SPI but it does have a USI (Universal Serial Interface). With this chip you are able to simulate SPI and I2C Communicatoin protocols.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When you look up the pinout from the Digispark ATTiny 85, you will se MISO and MOSI labeling on the <code class="docutils literal notranslate"><span class="pre">PB0</span></code> and <code class="docutils literal notranslate"><span class="pre">PB1</span></code>. These are NOT the labels for the USI as there is no SPI Hardware to be referenced. These pins are for the programming of the ATTiny and should not be referenced when making wiring decisions about the USI. Insted, you should find the <code class="docutils literal notranslate"><span class="pre">Digital</span> <span class="pre">Input</span></code> and <code class="docutils literal notranslate"><span class="pre">Digital</span> <span class="pre">Output</span></code> labeling and follow that. In the data sheet from the ATTiny 85 you will se the block diagram of the USI, and the pins referenced there are <code class="docutils literal notranslate"><span class="pre">DO</span></code> and <code class="docutils literal notranslate"><span class="pre">DI</span></code>.</p>
+</div>
+<p>ATTiny - SPI master</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Connections</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 16.7%" />
+<col style="width: 33.3%" />
+<col style="width: 16.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>AtTiny (master) Pin</p></th>
+<th class="head"><p>Pin description</p></th>
+<th class="head"><p>AtMega 2560 (slave) Pin</p></th>
+<th class="head"><p>Pin description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PB0</p></td>
+<td><p>Digital Input (DI)</p></td>
+<td><p>50</p></td>
+<td><p>MISO (Master In/Slave Out)</p></td>
+</tr>
+<tr class="row-odd"><td><p>PB1</p></td>
+<td><p>Digital Output (DO)</p></td>
+<td><p>51</p></td>
+<td><p>MOSI (Master Out/Slave In)</p></td>
+</tr>
+<tr class="row-even"><td><p>PB2</p></td>
+<td><p>Clock</p></td>
+<td><p>52</p></td>
+<td><p>SCK</p></td>
+</tr>
+<tr class="row-odd"><td><p>PB3</p></td>
+<td><p>SS - Slave Select</p></td>
+<td><p>53</p></td>
+<td><p>SS</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Three Wire SPI</a><ul>
+<li><a class="reference internal" href="#basic-info">Basic info</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../index.html"
+                          title="previous chapter">Welcome to The AVR Project’s documentation!</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/tw_spi/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to The AVR Project’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">The AVR Project  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Three Wire SPI</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, ivan brajinovic.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    </div>
+  </body>
+</html>
