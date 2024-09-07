@@ -22,12 +22,12 @@ ATTiny - SPI master
    * - PB0
      - Digital Input (DI)
      - 50
-     - MOSI (Master Out/Slave In)
+     - MISO (Master In/Slave Out)
 
    * - PB1
      - Digital Output (DO)
      - 51
-     - MISO (Master In/Slave Out)
+     - MOSI (Master Out/Slave In)
 
    * - PB2
      - Clock
