@@ -1,44 +1,22 @@
-#include "three_wire_spi.h"
 #include <avr/io.h>
-#include "debug.h"
-#include "clock.h"
+#include <util/delay.h>
+#include "three_wire_spi.h"
 
-int configure_spi(int mode){
-	if(mode != 0 || mode != 1){
-		return 0;
-	}
+void usi_config(void) {
+    DDRB |= (1 << DIGITAL_OUTPUT) | (1 << CLOCK) | (1 << SLAVE_SELECT); // outputs
+    DDRB &= ~(1 << DIGITAL_INPUT);	// input
+    // deselect slave
+    SS_HIGH();
 
-	if(mode == 1){ // master
-		DDRB &= 0b11111110; // configured B0 as input, B1 and B2 as outputs
-		set_clock(SOFTWARE_STROBE); // clock source select: software strobe
-	}else{ // slave
-		DDRB &= 0x11111010;
-		set_clock(EXTERNAL_POSITIVE_EDGE);
-	}
-	USICR |= 0b01010000; // ccounter overflow interrupt enable; three-wire mode;
-
-	return 1;
+    // Set up USI for SPI master mode, with software clock strobe
+    USICR = (1 << USIWM0) | (1 << USICS1);
 }
 
+uint8_t usi_transfer(uint8_t data) {
+    USIDR = data;  // Load data into USI Data Register
+    for(uint8_t i = 0; i < 16; i++){	// it goes untill 16 because I need to transfer 8 bits (8 clock periods is what I need) and I am toggling the clock
+         USICR ^= (1 << USITC);
+    }
 
-
-int main_fuck(){
-	debug_blink(500);
-	debug_blink(500);
-
-	configure_spi(1);
-	
-	debug_blink(250);
-	debug_blink(250);
-
-	USIDR = 0b10101010;
-
-	while(1){
-		if((USISR &= 0b01000000) || 0b01000000){
-			debug_blink(10000);
-		}
-		debug_blink(100);
-	}
-
-	return 1;
+    return USIDR;  // Return received data
 }
