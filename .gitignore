@@ -1,5 +1,6 @@
 doc/build
 build
+src/*.o
 *.hex
 *.map
 *.o
